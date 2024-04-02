@@ -69,17 +69,12 @@
 		AB68D9BF2BB34BA700EF8816 /* SetGame */ = {
 			isa = PBXGroup;
 			children = (
+				AB88A9D52BBCAFFF00A57501 /* Cards */,
+				AB88A9D32BBCAF7200A57501 /* Utils */,
 				AB68D9C02BB34BA700EF8816 /* SetGameApp.swift */,
-				AB68D9C22BB34BA700EF8816 /* SetGameMainView.swift */,
-				AB88A9D12BBC623A00A57501 /* StripedShape.swift */,
-				AB88A9C72BB4B27500A57501 /* AspectVGrid.swift */,
 				AB68D9CE2BB34BDF00EF8816 /* SetGame.swift */,
+				AB68D9C22BB34BA700EF8816 /* SetGameMainView.swift */,
 				AB88A9BF2BB3519F00A57501 /* SetGameViewModel.swift */,
-				AB88A9C52BB4B0A100A57501 /* CardView.swift */,
-				AB88A9CF2BB9C6B000A57501 /* Squiggle.swift */,
-				AB88A9CD2BB878D300A57501 /* Oval.swift */,
-				AB88A9C92BB872AD00A57501 /* Diamond.swift */,
-				AB88A9C12BB4692400A57501 /* CardContent.swift */,
 				AB68D9C42BB34BA800EF8816 /* Assets.xcassets */,
 				AB68D9C62BB34BA800EF8816 /* Preview Content */,
 			);
@@ -92,6 +87,51 @@
 				AB68D9C72BB34BA800EF8816 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		AB88A9D32BBCAF7200A57501 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				AB88A9D42BBCAF7A00A57501 /* Views */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		AB88A9D42BBCAF7A00A57501 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AB88A9D12BBC623A00A57501 /* StripedShape.swift */,
+				AB88A9CF2BB9C6B000A57501 /* Squiggle.swift */,
+				AB88A9CD2BB878D300A57501 /* Oval.swift */,
+				AB88A9C92BB872AD00A57501 /* Diamond.swift */,
+				AB88A9C72BB4B27500A57501 /* AspectVGrid.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AB88A9D52BBCAFFF00A57501 /* Cards */ = {
+			isa = PBXGroup;
+			children = (
+				AB88A9D72BBCB00800A57501 /* Models */,
+				AB88A9D62BBCB00400A57501 /* Views */,
+			);
+			path = Cards;
+			sourceTree = "<group>";
+		};
+		AB88A9D62BBCB00400A57501 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AB88A9C52BB4B0A100A57501 /* CardView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AB88A9D72BBCB00800A57501 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AB88A9C12BB4692400A57501 /* CardContent.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
