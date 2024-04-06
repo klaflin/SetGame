@@ -17,17 +17,21 @@ struct CardView: View {
     }
     
     var body: some View {
-        ZStack{
+        GeometryReader(){geometry in
+            let cardAspectRatio =   geometry.size.width / geometry.size.height
+            let contentAspectRatio = cardAspectRatio * 3
             
-            RoundedRectangle(cornerRadius: Constants.cornerRadius)
-                .fill(.white)
-                .stroke(card.isSelected ? .green : .gray, lineWidth: card.isSelected ? Constants.CardOutline.selectedWidth : Constants.CardOutline.deselectedWidth)
-            VStack{
-                ForEach(0..<card.content.numberOfShapes, id: \.self) { _ in
-                    shape
-                        .minimumScaleFactor(Constants.CardContent.scaleFactor)
-                        .aspectRatio(2/1, contentMode: .fit) //FIXME: dynamic aspect ratio
-                        .padding(Constants.inset)
+            ZStack{
+                RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                    .fill(.white)
+                    .stroke(card.isSelected ? borderColor : .gray, lineWidth: card.isSelected ? Constants.CardOutline.selectedWidth : Constants.CardOutline.deselectedWidth)
+                VStack{
+                    ForEach(0..<card.content.numberOfShapes, id: \.self) { _ in
+                        shape
+                            .minimumScaleFactor(Constants.CardContent.scaleFactor)
+                            .aspectRatio(contentAspectRatio, contentMode: .fit)
+                            .padding(Constants.inset)
+                    }
                 }
             }
         }
@@ -61,17 +65,28 @@ struct CardView: View {
     private var color: Color {
         switch card.content.color {
         case .pink:
-            return Color("Pink")
+            return Color("SetPink")
         case .blue:
-            return Color("Blue")
+            return Color("SetBlue")
         case .purple:
-            return Color("Purple")
+            return Color("SetPurple")
+        }
+    }
+    
+    private var borderColor: Color {
+        switch card.isMatched {
+        case .positive:
+            return .green
+        case .neutral:
+            return .blue
+        case .negative:
+            return .red
         }
     }
     
     private struct Constants {
         static let lineWidth : CGFloat = 2
-        static let inset : CGFloat = 4
+        static let inset : CGFloat = 2
         static let cornerRadius : CGFloat = 12
         struct CardOutline {
             static let selectedWidth : CGFloat = 4

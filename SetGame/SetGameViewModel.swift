@@ -40,7 +40,6 @@ class SetGameViewModel: ObservableObject {
     }
     
     func selectCard(_ card: SetGame<CardContent>.Card){
-        print("VM select card")
         game.selectCard(card)
     }
     

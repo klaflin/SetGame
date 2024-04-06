@@ -27,25 +27,33 @@ struct SetGame<CardContent : Equatable> {
     }
     
     //MARK: Computed Vars
-    var dealtCards : [Card] { get { deck.filter({$0.isFaceUp && !$0.isMatched}) } }
+    var dealtCards : [Card] { get { deck.filter({$0.isFaceUp && $0.isMatched != .positive}) } }
     
-    var unDealtCards : [Card] { get { deck.filter({!$0.isFaceUp && !$0.isMatched}) } }
+    var unDealtCards : [Card] { get { deck.filter({!$0.isFaceUp && !($0.isMatched == .positive)}) } }
     
-    var gameOver : Bool { get { deck.allSatisfy({$0.isFaceUp}) } } //FIXME: This will end the game prematurely; should end only when no more sets are available
+    var gameOver : Bool { get { deck.allSatisfy({$0.isMatched == .positive}) } }
     
-    var score: Int { get { deck.filter({$0.isMatched}).count } }
+    var score: Int { get { deck.filter({$0.isMatched == .positive}).count } }
     
     var validSetOnBoard : Bool = true //TODO: implement computing logic
     
-    var selectedCards : [Card] { get { deck.filter({$0.isSelected && !$0.isMatched }) } }
+    var selectedCards : [Card] { get { deck.filter({$0.isSelected }) } }
     
     //MARK: Game functions
     mutating func selectCard(_ card: Card){
         if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
-            if  selectedCards.count < 3 || selectedCards.contains(deck[chosenIndex]) {
+            if  selectedCards.count < 3  {
+                deck[chosenIndex].isSelected.toggle()
+                if selectedCards.count == 3 {
+                    checkSet()
+                }
+            } else {
+                clearSelection()
+                decideToDeal()
                 deck[chosenIndex].isSelected.toggle()
             }
         }
+        decideToDeal()
     }
     
     mutating func checkSet() {
@@ -60,15 +68,14 @@ struct SetGame<CardContent : Equatable> {
         if setComparitor(card1, card2, card3) { //we have a set
             for card in selectedCards {
                 if let index = deck.firstIndex(of: card) {
-                    deck[index].isMatched = true
-                    deck[index].isSelected = false
+                    deck[index].isMatched = .positive
                 }
             }
-            deal()
+            decideToDeal()
         } else {
             for card in selectedCards {
                 if let index = deck.firstIndex(of: card) {
-                    deck[index].isSelected = false
+                    deck[index].isMatched = .negative
                 }
             }
         }
@@ -88,13 +95,32 @@ struct SetGame<CardContent : Equatable> {
         }
     }
     
+    private mutating func decideToDeal() {
+        if dealtCards.count < 12 {
+            deal()
+        }
+    }
+    
+    mutating private func clearSelection() {
+        for card in selectedCards {
+            if let index = deck.firstIndex(of: card) {
+                if deck[index].isMatched == .positive {
+                    deck[index].isFaceUp = false
+                } else {
+                    deck[index].isMatched = .neutral
+                }
+                deck[index].isSelected = false
+            }
+        }
+    }
+    
     //MARK: Card
     struct Card: Identifiable, CustomDebugStringConvertible, Equatable {
         let content: CardContent
         
         var isSelected = false
         var isFaceUp = false
-        var isMatched = false
+        var isMatched : TriState = .neutral
         
         let id: Int
         
@@ -102,6 +128,13 @@ struct SetGame<CardContent : Equatable> {
             "\(id): \(content)"
             //"\(id): \(isMatched) \(isFaceUp)"
         }
+    }
+    
+    //MARK: 3-boolean
+    enum TriState {
+        case positive;
+        case neutral;
+        case negative;
     }
 }
 

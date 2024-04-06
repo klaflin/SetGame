@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StripedShape<T>: View where T: InsettableShape {
+struct StripedShape<T>: View where T: Shape {
     var numberOfStrips: Int = 6 //FIXME: vary by shape size
     var borderLineWidth: CGFloat
     let color : Color
@@ -36,11 +36,11 @@ struct StripedShape<T>: View where T: InsettableShape {
 #Preview {
     VStack {
         HStack{
-            StripedShape(borderLineWidth: 8, color: Color("Blue"), shape: Squiggle())
-            StripedShape(borderLineWidth: 4, color: Color("Pink"), shape: Oval())
+            StripedShape(borderLineWidth: 8, color: Color("SetBlue"), shape: Squiggle())
+            StripedShape(borderLineWidth: 4, color: Color("SetPink"), shape: Oval())
         }
         HStack{
-            StripedShape(borderLineWidth: 12, color: Color("Purple"), shape: Diamond())
+            StripedShape(borderLineWidth: 12, color: Color("SetPurple"), shape: Diamond())
             StripedShape(borderLineWidth: 2, color: Color.black, shape: Circle())
         }
     }
