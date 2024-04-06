@@ -20,12 +20,13 @@ struct SetGameMainView: View {
             DynamicStack(defaultInPortrait: .veritcal, hStackSpacing: Constants.hStackSpacing){
                 cards
                 DynamicStack(defaultInPortrait: .horizontal, hStackSpacing: Constants.hStackSpacing) {
-                    deck
+                    if (game.cardsLeftInDeck > 0){deck}
                     stats
                 }.frame(
                     maxWidth: portrait ? geometry.size.width : geometry.size.width * Constants.Deck.sizeLimitMultiplier,
                         maxHeight:  portrait ? geometry.size.height * Constants.Deck.sizeLimitMultiplier : geometry.size.height
                 )
+                .padding(portrait ? 0 : 15)
             }
             .padding()
         }

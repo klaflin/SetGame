@@ -27,7 +27,7 @@ struct SetGame<CardContent : Equatable> {
     }
     
     //MARK: Computed Vars
-    var dealtCards : [Card] { get { deck.filter({$0.isFaceUp && $0.isMatched != .positive}) } }
+    var dealtCards : [Card] { get { deck.filter({$0.isFaceUp  }) } }
     
     var unDealtCards : [Card] { get { deck.filter({!$0.isFaceUp && !($0.isMatched == .positive)}) } }
     
@@ -71,7 +71,6 @@ struct SetGame<CardContent : Equatable> {
                     deck[index].isMatched = .positive
                 }
             }
-            decideToDeal()
         } else {
             for card in selectedCards {
                 if let index = deck.firstIndex(of: card) {
@@ -82,14 +81,14 @@ struct SetGame<CardContent : Equatable> {
     }
     
     mutating func deal() {
+        clearSelection()
         var count = 3
         if dealtCards.count < 12 { //we have less than 12 cards on the board
             count = 12 - dealtCards.count
         }
-        let countCardsToAdd = deck.count >= count ? count : deck.count //can't grab cards that don't exist
-        
+        let countCardsToAdd = unDealtCards.count >= count ? count : unDealtCards.count //can't grab cards that don't exist
         for _ in 0..<countCardsToAdd {
-            if let firstIndex = deck.firstIndex(where: {!$0.isFaceUp}) {
+            if let firstIndex = deck.firstIndex(where:{unDealtCards.contains($0) }) {
                 deck[firstIndex].isFaceUp = true
             }
         }
@@ -106,12 +105,15 @@ struct SetGame<CardContent : Equatable> {
             if let index = deck.firstIndex(of: card) {
                 if deck[index].isMatched == .positive {
                     deck[index].isFaceUp = false
+                    print(selectedCards)
+                    print(dealtCards.count)
                 } else {
                     deck[index].isMatched = .neutral
                 }
                 deck[index].isSelected = false
             }
         }
+        
     }
     
     //MARK: Card
@@ -125,8 +127,8 @@ struct SetGame<CardContent : Equatable> {
         let id: Int
         
         var debugDescription: String {
-            "\(id): \(content)"
-            //"\(id): \(isMatched) \(isFaceUp)"
+            //"\(id): \(content)"
+            "\(id): \(isMatched) \(isFaceUp)"
         }
     }
     
