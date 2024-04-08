@@ -17,18 +17,22 @@ struct SetGameMainView: View {
         GeometryReader { geometry in
             let portrait  = (hSizeClass == .compact && vSizeClass == .regular)
             
-            DynamicStack(defaultInPortrait: .veritcal, hStackSpacing: Constants.hStackSpacing){
-                cards
-                DynamicStack(defaultInPortrait: .horizontal, hStackSpacing: Constants.hStackSpacing) {
-                    if (game.cardsLeftInDeck > 0){deck}
-                    stats
-                }.frame(
-                    maxWidth: portrait ? geometry.size.width : geometry.size.width * Constants.Deck.sizeLimitMultiplier,
+            if (game.gameOver){
+                gameOver
+            } else {
+                DynamicStack(defaultInPortrait: .veritcal, hStackSpacing: Constants.hStackSpacing){
+                    cards
+                    DynamicStack(defaultInPortrait: .horizontal, hStackSpacing: Constants.hStackSpacing) {
+                        if (game.cardsLeftInDeck > 0){deck}
+                        stats
+                    }.frame(
+                        maxWidth: portrait ? geometry.size.width : geometry.size.width * Constants.Deck.sizeLimitMultiplier,
                         maxHeight:  portrait ? geometry.size.height * Constants.Deck.sizeLimitMultiplier : geometry.size.height
-                )
-                .padding(portrait ? 0 : 15)
+                    )
+                    .padding(portrait ? 0 : 15)
+                }
+                .padding()
             }
-            .padding()
         }
     }
     
@@ -55,10 +59,10 @@ struct SetGameMainView: View {
             .aspectRatio(Constants.aspectRatio, contentMode: .fit)
         }
         .rotationEffect(Angle(degrees: 90))
-            .onTapGesture {
-                game.submitSet()
-                game.deal()
-            }
+        .onTapGesture {
+            game.submitSet()
+            game.deal()
+        }
         
     }
     
@@ -77,14 +81,35 @@ struct SetGameMainView: View {
     var stats: some View {
         VStack(){
             Text("Deck Size: \(game.cardsLeftInDeck)")
-            Text("Score: \(game.score)")
+            score
             Button(action: {game.cheat()}, label: {
                 Text("Get Help")
             })
-            Button(action: {game.newGame()}, label: {
-                Text("New Game")
-            })
+            newGame
+            
         }.font(.callout)
+    }
+    
+    var gameOver: some View {
+        ZStack(){
+            RoundedRectangle(cornerRadius: Constants.cornerRadius).fill(.white)
+            VStack(){
+                Text("Game over!").font(.largeTitle)
+                score
+                Text("Cards left over: \(game.cards.count)")
+                newGame
+            }
+        }
+    }
+    
+    var score: some View {
+        Text("Score: \(game.score)")
+    }
+    
+    var newGame : some View {
+        Button(action: {game.newGame()}, label: {
+            Text("New Game")
+        })
     }
     
     struct Constants {

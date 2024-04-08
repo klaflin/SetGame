@@ -25,6 +25,8 @@ class SetGameViewModel: ObservableObject {
     
     var cardsLeftInDeck : Int { game.unDealtCards.count }
     
+    var gameOver : Bool { game.gameOver }
+    
     //MARK: Intent Functions
     func newGame(){
         let content = SetGameViewModel.buildContentArray()
