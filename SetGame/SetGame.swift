@@ -40,6 +40,8 @@ struct SetGame<CardContent : Equatable> {
     
     var selectedCards : [Card] { get { deck.filter({$0.isSelected }) } }
     
+    var validSetOnBoard : [Card]? {findValidSetOnBoard()}
+    
     //MARK: Game functions
     mutating func selectCard(_ card: Card){
         if let chosenIndex = deck.firstIndex(where: {$0.id == card.id}) {
@@ -100,9 +102,12 @@ struct SetGame<CardContent : Equatable> {
     }
     
     mutating func cheat() {
-        clearSelection()
-        if let validSet = findValidSetOnBoard() {
-            for card in validSet {
+        if selectedCards.count == 3 {
+            clearSelection()
+            deal()
+        }
+        if let validSet = self.validSetOnBoard {
+            if let card = validSet.first(where: {!$0.cheated}) {
                 selectCard(card)
                 if let index = deck.firstIndex(where: {$0.id == card.id}){
                     deck[index].cheated = true
