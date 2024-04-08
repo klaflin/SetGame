@@ -78,6 +78,9 @@ struct SetGameMainView: View {
         VStack(){
             Text("Deck Size: \(game.cardsLeftInDeck)")
             Text("Score: \(game.score)")
+            Button(action: {game.cheat()}, label: {
+                Text("Get Help")
+            })
             Button(action: {game.newGame()}, label: {
                 Text("New Game")
             })

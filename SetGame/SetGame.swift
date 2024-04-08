@@ -13,6 +13,9 @@ struct SetGame<CardContent : Equatable> {
     private(set) var deck: [Card]
     private let setComparitor: (Card, Card, Card) -> Bool
     
+    
+    private var penalities = 0
+    
     init(setComparitor: @escaping (Card, Card, Card) -> Bool, cardContents: [CardContent]){
         self.setComparitor = setComparitor
         deck = []
@@ -33,9 +36,7 @@ struct SetGame<CardContent : Equatable> {
     
     var gameOver : Bool { get { deck.allSatisfy({$0.isMatched == .positive}) } }
     
-    var score: Int { get { deck.filter({$0.isMatched == .positive}).count } }
-    
-    var validSetOnBoard : Bool = true //TODO: implement computing logic
+    var score: Int { get { deck.filter({$0.isMatched == .positive && !$0.cheated}).count - self.penalities} }
     
     var selectedCards : [Card] { get { deck.filter({$0.isSelected }) } }
     
@@ -92,12 +93,35 @@ struct SetGame<CardContent : Equatable> {
                 deck[firstIndex].isFaceUp = true
             }
         }
-    }
-    
-    private mutating func decideToDeal() {
-        if dealtCards.count < 12 {
+        
+        if findValidSetOnBoard() == nil { //if no valid set after dealing, deal again
             deal()
         }
+    }
+    
+    mutating func cheat() {
+        clearSelection()
+        if let validSet = findValidSetOnBoard() {
+            for card in validSet {
+                selectCard(card)
+                if let index = deck.firstIndex(where: {$0.id == card.id}){
+                    deck[index].cheated = true
+                }
+            }
+        }
+    }
+    
+    private func findValidSetOnBoard() -> [Card]? { //FIXME: optimize? O(n^3) currently
+        for i in 0...(dealtCards.count - 3) {
+            for j in (i+1)...(dealtCards.count - 2) {
+                for k in (j+1)...(dealtCards.count - 1) {
+                    if setComparitor(dealtCards[i], dealtCards[j], dealtCards[k]){
+                        return [dealtCards[i], dealtCards[k], dealtCards[j]]
+                    }
+                }
+            }
+        }
+        return nil;
     }
     
     mutating private func clearSelection() {
@@ -105,8 +129,6 @@ struct SetGame<CardContent : Equatable> {
             if let index = deck.firstIndex(of: card) {
                 if deck[index].isMatched == .positive {
                     deck[index].isFaceUp = false
-                    print(selectedCards)
-                    print(dealtCards.count)
                 } else {
                     deck[index].isMatched = .neutral
                 }
@@ -114,6 +136,19 @@ struct SetGame<CardContent : Equatable> {
             }
         }
         
+    }
+    
+    //MARK: Helper Functions
+    private mutating func decideToDeal() {
+        if dealtCards.count < 12 {
+            deal()
+        }
+    }
+    
+    mutating func decideToPenalize() {
+        if let _ = findValidSetOnBoard() {
+            self.penalities += 3;
+        }
     }
     
     //MARK: Card
@@ -124,11 +159,13 @@ struct SetGame<CardContent : Equatable> {
         var isFaceUp = false
         var isMatched : TriState = .neutral
         
+        var cheated = false
+        
         let id: Int
         
         var debugDescription: String {
             //"\(id): \(content)"
-            "\(id): \(isMatched) \(isFaceUp)"
+            "\(id): \(isMatched) \(isFaceUp) \(cheated)"
         }
     }
     

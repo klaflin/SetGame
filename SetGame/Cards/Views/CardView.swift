@@ -76,7 +76,7 @@ struct CardView: View {
     private var borderColor: Color {
         switch card.isMatched {
         case .positive:
-            return .green
+            return card.cheated ? .yellow : .green
         case .neutral:
             return .blue
         case .negative:

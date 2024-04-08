@@ -32,6 +32,7 @@ class SetGameViewModel: ObservableObject {
     }
     
     func deal() {
+        game.decideToPenalize()
         game.deal()
     }
     
@@ -41,6 +42,10 @@ class SetGameViewModel: ObservableObject {
     
     func selectCard(_ card: SetGame<CardContent>.Card){
         game.selectCard(card)
+    }
+    
+    func cheat() {
+        game.cheat()
     }
     
     //MARK: UTIL FUNCTIONS
